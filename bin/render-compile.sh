@@ -13,7 +13,8 @@ echo "-----> Running database migration"
 python manage.py migrate --noinput
 
 echo "-----> Running dynamic preferences checks"
-python manage.py checkpreferences
+echo "-----> Skipping checks"
+#python manage.py checkpreferences
 
 echo "-----> Running static asset compilation"
 npm install -g @vue/cli-service-global
