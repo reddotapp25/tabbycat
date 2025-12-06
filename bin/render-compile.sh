@@ -10,11 +10,11 @@ echo "-----> I'm post-compile hook"
 cd ./tabbycat/
 
 echo "-----> Running database migration"
-python manage.py migrate --noinput
+DJANGO_SETTINGS_MODULE=tabbycat.settings.render python manage.py migrate --noinput
 
 echo "-----> Running dynamic preferences checks"
 echo "-----> Skipping checks"
-#python manage.py checkpreferences
+# python manage.py checkpreferences  # Command doesn't exist
 
 echo "-----> Running static asset compilation"
 npm install -g @vue/cli-service-global
@@ -22,6 +22,6 @@ npm install
 npm run build
 
 echo "-----> Running static files compilation"
-python manage.py collectstatic --noinput
+DJANGO_SETTINGS_MODULE=tabbycat.settings.render python manage.py collectstatic --noinput
 
 echo "-----> Post-compile done"
