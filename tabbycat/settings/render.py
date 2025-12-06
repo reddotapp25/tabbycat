@@ -1,19 +1,7 @@
 import logging
 import os
 
-import dj_database_url
-import sentry_sdk
-from sentry_sdk.integrations.logging import LoggingIntegration
-from sentry_sdk.integrations.django import DjangoIntegration
-from sentry_sdk.integrations.redis import RedisIntegration
-
-from .core import TABBYCAT_VERSION
-
-# ==============================================================================
-# Django Core Settings
-# ==============================================================================
-ROOT_URLCONF = 'tabbycat.urls'
-WSGI_APPLICATION = 'tabbycat.wsgi.application'
+from .base import *  # This imports all base settings
 
 # ==============================================================================
 # Render per https://render.com/docs/deploy-django
@@ -41,6 +29,7 @@ if RENDER_EXTERNAL_HOSTNAME:
 # ==============================================================================
 
 # Parse database configuration from $DATABASE_URL
+import dj_database_url
 DATABASES = {
     'default': dj_database_url.config(
         # Feel free to alter this value to suit your needs.
@@ -84,6 +73,13 @@ CHANNEL_LAYERS = {
 
 if not os.environ.get('DISABLE_SENTRY'):
     DISABLE_SENTRY = False
+    import sentry_sdk
+    from sentry_sdk.integrations.logging import LoggingIntegration
+    from sentry_sdk.integrations.django import DjangoIntegration
+    from sentry_sdk.integrations.redis import RedisIntegration
+    
+    from .core import TABBYCAT_VERSION
+    
     sentry_sdk.init(
         dsn="https://6bf2099f349542f4b9baf73ca9789597@o85113.ingest.sentry.io/185382",
         integrations=[
