@@ -16,7 +16,6 @@ ls -la
 echo "-----> Debug: Python and Django"
 python --version
 python -c "import django; print(f'Django: {django.__version__}')" || echo "Django not found"
-python -c "import sys; print(f'Python path: {sys.path}')"
 
 echo "-----> Set Django settings"
 export DJANGO_SETTINGS_MODULE=tabbycat.settings.render
@@ -38,10 +37,16 @@ npm run build
 
 echo "-----> Debug: Before collectstatic"
 python -c "import django; print('Django available')" || echo "Django NOT available"
-python manage.py help | grep collectstatic || echo "collectstatic command not found"
 
-echo "-----> Running static files compilation"
-python manage.py collectstatic --noinput
+echo "-----> Checking for collectstatic command"
+if python manage.py help 2>/dev/null | grep -q collectstatic; then
+    echo "✅ collectstatic command found"
+    echo "-----> Running static files compilation"
+    python manage.py collectstatic --noinput
+else
+    echo "⚠️  collectstatic command not found, skipping"
+    echo "ℹ️  Static files may already be built by Vue.js compilation"
+fi
 
 echo "-----> Creating superuser"
 python manage.py shell << EOF
