@@ -9,26 +9,41 @@ pipenv install --system
 echo "-----> I'm post-compile hook"
 cd ./tabbycat/
 
-# Set Django settings for all commands
+echo "-----> Debug: Current directory"
+pwd
+ls -la
+
+echo "-----> Debug: Python and Django"
+python --version
+python -c "import django; print(f'Django: {django.__version__}')" || echo "Django not found"
+python -c "import sys; print(f'Python path: {sys.path}')"
+
+echo "-----> Set Django settings"
 export DJANGO_SETTINGS_MODULE=tabbycat.settings.render
+python -c "from django.conf import settings; print(f'Settings module: {settings.SETTINGS_MODULE}')" || echo "Cannot load settings"
+
+echo "-----> Debug: Available Django commands"
+python manage.py help || echo "manage.py help failed"
 
 echo "-----> Running database migration"
 python manage.py migrate --noinput
 
 echo "-----> Running dynamic preferences checks"
 echo "-----> Skipping checks"
-# python manage.py checkpreferences  # Command doesn't exist
 
 echo "-----> Running static asset compilation"
 npm install -g @vue/cli-service-global
 npm install
 npm run build
 
+echo "-----> Debug: Before collectstatic"
+python -c "import django; print('Django available')" || echo "Django NOT available"
+python manage.py help | grep collectstatic || echo "collectstatic command not found"
+
 echo "-----> Running static files compilation"
 python manage.py collectstatic --noinput
 
 echo "-----> Creating superuser"
-# Create default superuser if it doesn't exist
 python manage.py shell << EOF
 from django.contrib.auth import get_user_model
 User = get_user_model()
