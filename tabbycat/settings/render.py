@@ -10,6 +10,12 @@ from sentry_sdk.integrations.redis import RedisIntegration
 from .core import TABBYCAT_VERSION
 
 # ==============================================================================
+# Django Core Settings
+# ==============================================================================
+ROOT_URLCONF = 'tabbycat.urls'
+WSGI_APPLICATION = 'tabbycat.wsgi.application'
+
+# ==============================================================================
 # Render per https://render.com/docs/deploy-django
 # ==============================================================================
 
