@@ -49,15 +49,21 @@ else
 fi
 
 echo "-----> Creating superuser"
-python manage.py shell << EOF
+python -c "
+import os
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'tabbycat.settings.render')
+import django
+django.setup()
+
 from django.contrib.auth import get_user_model
 User = get_user_model()
+
 if not User.objects.filter(username='admin').exists():
     User.objects.create_superuser('admin', 'admin@example.com', 'ChangeMe123!')
-    print("✅ Superuser created: username='admin', password='ChangeMe123!'")
-    print("⚠️  IMPORTANT: Change this password immediately after login!")
+    print('✅ Superuser created: username=\"admin\", password=\"ChangeMe123!\"')
+    print('⚠️  IMPORTANT: Change this password immediately after login!')
 else:
-    print("ℹ️  Superuser 'admin' already exists")
-EOF
+    print('ℹ️  Superuser \"admin\" already exists')
+"
 
 echo "-----> Post-compile done"
