@@ -9,20 +9,8 @@ pipenv install --system
 echo "-----> I'm post-compile hook"
 cd ./tabbycat/
 
-echo "-----> Debug: Current directory"
-pwd
-ls -la
-
-echo "-----> Debug: Python and Django"
-python --version
-python -c "import django; print(f'Django: {django.__version__}')" || echo "Django not found"
-
 echo "-----> Set Django settings"
 export DJANGO_SETTINGS_MODULE=tabbycat.settings.render
-python -c "from django.conf import settings; print(f'Settings module: {settings.SETTINGS_MODULE}')" || echo "Cannot load settings"
-
-echo "-----> Debug: Available Django commands"
-python manage.py help || echo "manage.py help failed"
 
 echo "-----> Running database migration"
 python manage.py migrate --noinput
@@ -35,9 +23,6 @@ npm install -g @vue/cli-service-global
 npm install
 npm run build
 
-echo "-----> Debug: Before collectstatic"
-python -c "import django; print('Django available')" || echo "Django NOT available"
-
 echo "-----> Checking for collectstatic command"
 if python manage.py help 2>/dev/null | grep -q collectstatic; then
     echo "✅ collectstatic command found"
@@ -49,21 +34,11 @@ else
 fi
 
 echo "-----> Creating superuser"
-python -c "
-import os
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'tabbycat.settings.render')
-import django
-django.setup()
-
-from django.contrib.auth import get_user_model
-User = get_user_model()
-
-if not User.objects.filter(username='admin').exists():
-    User.objects.create_superuser('admin', 'admin@example.com', 'ChangeMe123!')
-    print('✅ Superuser created: username=\"admin\", password=\"ChangeMe123!\"')
-    print('⚠️  IMPORTANT: Change this password immediately after login!')
-else:
-    print('ℹ️  Superuser \"admin\" already exists')
-"
+echo "⚠️  Superuser creation skipped in build"
+echo "ℹ️  After deployment, you'll need to:"
+echo "    1. Wait for app to be 'Live'"
+echo "    2. Go to your Render URL"
+echo "    3. Use the registration page or Django admin"
+echo "    4. Or contact support for manual creation"
 
 echo "-----> Post-compile done"
